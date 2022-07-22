@@ -1,7 +1,7 @@
 const express = require("express");
 const userController = require("../controllers/user-controller");
 const router = express.Router();
-
+const auth_middleware=require('../middleware/auth')
 //Get Request
 router.get("/", userController.getUser);
 //  Get Request for particular id
@@ -13,6 +13,6 @@ router.post("/", userController.createUser);
 router.put("/:id",userController.updateUser);
 
 // // delete request
-router.delete("/:id", userController.deleteUser);
+router.delete("/:id",auth_middleware, userController.deleteUser);
 
 module.exports = router;
