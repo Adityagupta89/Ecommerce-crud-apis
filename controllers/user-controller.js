@@ -52,16 +52,12 @@ const updateUser = async (req, res) => {
       return res
         .status(404)
         .send("The customer with the given ID was not found.");
-
-    user.first_name = req.body.first_name
-      ? req.body.first_name
-      : user.first_name;
+ 
+     (user.first_name = req.body.first_name ? req.body.first_name : user.first_name);
     (user.last_name = req.body.last_name ? req.body.last_name : user.last_name),
       (user.email = req.body.email ? req.body.email : user.email),
       (user.password = req.body.password ? req.body.password : user.password),
-      (user.mobile_no = req.body.mobile_no
-        ? req.body.mobile_no
-        : user.mobile_no),
+      (user.mobile_no = req.body.mobile_no ? req.body.mobile_no : user.mobile_no),
       (user.address = req.body.address ? req.body.address : user.address),
       (user.dob = req.body.dob ? req.body.dob : user.dob),
       user.save();
@@ -75,7 +71,7 @@ const deleteUser = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send("Id is not valid");
   const user = await User.findByIdAndRemove(req.params.id);
-  if (!User)
+  if (!user)
     return res
       .status(204)
       .send("The customer with the given ID was not found.");

@@ -3,10 +3,14 @@ const app = express();
 const mongoose = require("mongoose");
 const { DB, PORT } = require("./config/index");
 const user_routes = require("./routes/users");
+const product_routes = require("./routes/product");
+const order_routes = require("./routes/order");
 const auth_routes=require('./routes/auth')
 app.use(express.json());
 app.use("/api/user/", user_routes);
 app.use("/api/user/",auth_routes);
+app.use("/api/product",product_routes);
+app.use("/api/order/",order_routes);
 mongoose
   .connect(DB)
   .then(() => console.log("Connected to MongoDB..."))
