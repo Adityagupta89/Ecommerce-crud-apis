@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
 const { Order, validateOrder } = require("../models/order");
-const {User}=require('../models/user')
+const {User}=require('../models/user');
+
 const getOrder = async (req, res) => {
   const orders = await Order.find();
   res.send(orders);
 };
+
 const getOrderById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send("Id is not valid");
@@ -61,6 +63,7 @@ const updateOrder = async (req, res) => {
     res.status(400).send(err);
   }
 };
+
 const deleteOrder = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send("Id is not valid");
@@ -71,6 +74,7 @@ const deleteOrder = async (req, res) => {
       .send("The customer with the given ID was not found.");
   res.send("Order deleted");
 };
+
 module.exports.getOrder = getOrder;
 module.exports.getOrderById = getOrderById;
 module.exports.createOrder = createOrder;

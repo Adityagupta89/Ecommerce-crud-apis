@@ -1,9 +1,13 @@
 const mongoose = require("mongoose");
 const { Product, validateProduct} = require("../models/product");
+
+
 const getProduct= async (req, res) => {
   const products = await Product.find();
   res.send(products);
 };
+
+
 const getProductById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send("Id is not valid");
@@ -62,6 +66,8 @@ const updateProduct = async (req, res) => {
     res.status(400).send(err);
   }
 };
+
+
 const deleteProduct = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send("Id is not valid");
@@ -73,6 +79,8 @@ const deleteProduct = async (req, res) => {
 
   res.send("product deleted");
 };
+
+
 module.exports.getProduct = getProduct;
 module.exports.getProductById = getProductById;
 module.exports.createProduct = createProduct;

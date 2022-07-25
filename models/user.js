@@ -33,6 +33,7 @@ const User=mongoose.model('User',new mongoose.Schema({
         default:Date.now
     }
 }))
+
 function validateUser(user) {
     const schema = Joi.object().keys({
       first_name: Joi.string().min(2).max(50).required(),
@@ -57,7 +58,15 @@ function validateUserUpdate(user) {
     });
     return schema.validate(user);
   }
+function validateAdmin(userAdmin) {
+    const schema = Joi.object().keys({
+      email: Joi.string().required().email(),
+      password:Joi.string().min(5).max(255).required(),
+    });
+    return schema.validate(user);
+  }
 
 module.exports.User=User
 module.exports.validateUser=validateUser
 module.exports.validateUserUpdate=validateUserUpdate
+module.exports.validateAdmin=validateAdmin

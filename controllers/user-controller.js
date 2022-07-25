@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const { User, validateUser, validateUserUpdate } = require("../models/user");
+
 const getUser = async (req, res) => {
   const users = await User.find();
   res.send(users);
@@ -16,6 +17,7 @@ const getUserById = async (req, res) => {
       .send("The customer with the given ID was not found.");
   res.send(user);
 };
+
 
 const createUser = async (req, res) => {
   const { error } = validateUser(req.body);
@@ -67,6 +69,8 @@ const updateUser = async (req, res) => {
     res.status(400).send(err);
   }
 };
+
+
 const deleteUser = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send("Id is not valid");
@@ -78,6 +82,7 @@ const deleteUser = async (req, res) => {
 
   res.send("User deleted");
 };
+
 module.exports.getUser = getUser;
 module.exports.getUserById = getUserById;
 module.exports.createUser = createUser;

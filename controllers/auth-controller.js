@@ -5,6 +5,8 @@ const Joi=require('joi')
 const jwt=require('jsonwebtoken');
 const mongoose=require('mongoose');
 const bcrypt=require('bcrypt')
+
+
 const auth=async (req,res)=>{
     const {error}=validate(req.body)
     if(error)return res.status(400).send(error.details[0].message);
@@ -14,10 +16,15 @@ const auth=async (req,res)=>{
     console.log(req.body.password,user.password);
     const validPassword=await bcrypt.compare(req.body.password,user.password)
     if(!validPassword) return res.status(400).send('Invalid password')
-    const token=jwt.sign({_id:user._id},JWT_PRIVATE_KEY);
+    let token;
+    if(user.email=="admin123@thinkitive.com")
+     token=jwt.sign({_id:user._id,is_Admin:true},JWT_PRIVATE_KEY)
+    else
+     token=jwt.sign({_id:user._id,is_Admin:false},JWT_PRIVATE_KEY);
     res.send(token)
-     
-}
+} 
+
+
 function validate(user) {
     const schema = Joi.object().keys({
       email: Joi.string().min(5).max(255).required().email(),
