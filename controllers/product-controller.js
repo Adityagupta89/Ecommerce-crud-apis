@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const { Product, validateProduct} = require("../models/product");
-
-
+const fs=require('file-system')
+// const imageSchema=mongoose.Schema({
+//   image:{data:Buffer,contentType:String}
+// });
+// const ImageModel=mongoose.model('image',imageSchema);
 const getProduct= async (req, res) => {
   const products = await Product.find();
   res.send(products);
@@ -21,13 +24,14 @@ const getProductById = async (req, res) => {
 
 const createProduct = async (req, res) => {
   const { error } = validateProduct(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  const product= new Product({
+  if (error) return res.status(400).send({msg:error.details[0].message,status:400,data:''});  
+  
+  const product = new Product({
     name: req.body.name,
     price: req.body.price,
     weight: req.body.weight,
     description: req.body.description,
-    image: req.body.image,
+    product_image:req.file.path,
     category: req.body.category,
     create_date: req.body.create_date,
     quantity:req.body.quantity
@@ -35,35 +39,36 @@ const createProduct = async (req, res) => {
   try {
     user = await product.save();
   } catch (err) {
-    return res.status(400).send(err.message);
+    return res.status(400).send({msg:err.message,data:'',status:400});
   }
-  res.status(201).send(product);
+  res.status(201).send({msg:"Product is created ",status:201,data:product});
 };
 
 const updateProduct = async (req, res) => {
+  console.log(req.params.id)
   const { error } = validateProduct(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send({msg:error.details[0].message,status:400,data:''});
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
+    return res.status(400).send({msg:"Id is not valid",status:400,data:''});
   try {
     const product= await Product.findById(req.params.id);
     if (!product)
       return res
         .status(404)
-        .send("The customer with the given ID was not found.");
+        .send({msg:"The customer with the given ID was not found.",status:404,data:''});
       (product.name = req.body.name  ? req.body.name : product.name);
       (product.price = req.body.price ? req.body.price : product.price),
       (product.weight = req.body.weight ? req.body.weight : product.weight),
       (product.description= req.body.description ? req.body.description : product.description),
-      (product.image= req.body.image ? req.body.image : product.image),
+      (product.product_image= req.file?.path ? req.file?.path : product.product_image),
       (product.category= req.body.category ? req.body.category : product.category),
       (product.create_date= req.body.create_date ? req.body.create_date : product.create_date),
       (product.quantity= req.body.quantity ? req.body.quantity : product.quantity),
       product.save();
-    res.send(product);
+    res.send({msg:"Product is updated ",status:201,data:''});
   } catch (err) {
     console.log(err);
-    res.status(400).send(err);
+    res.status(400).send({msg:err,status:400,data:''});
   }
 };
 

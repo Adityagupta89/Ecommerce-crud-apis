@@ -5,7 +5,7 @@ const Product=mongoose.model('Product',new mongoose.Schema({
         type:String,
         minlength:5,
         maxlength:50
-    },
+    }, 
     price:{
         type:Number,
         require:true
@@ -15,7 +15,10 @@ const Product=mongoose.model('Product',new mongoose.Schema({
         type:String,
         required:true,
     },
-    image:String,
+    product_image:{
+        type:String,
+        
+    },
     category:String,
     create_date:{
         type:Date,
@@ -23,21 +26,20 @@ const Product=mongoose.model('Product',new mongoose.Schema({
     },
     quantity:{
         type:Number,
-        require:true
+        // require:true
     }
 }))
 
 
 function validateProduct(product) {
     const schema = Joi.object().keys({
-      name: Joi.string().min(2).max(50).required(),
-      price: Joi.number().required(),
+      name: Joi.string().min(2).max(50),
+      price: Joi.number(),
       weight: Joi.number(),
-      description:Joi.string().min(5).max(255).required(),
-      quantity:Joi.number().required(),
-      image:Joi.string(),
+      description:Joi.string().min(5).max(255),
+      quantity:Joi.number(),
       category:Joi.string(),
-      create_date:Joi.date()
+      create_date:Joi.date(),
     });
     return schema.validate(product);
   }

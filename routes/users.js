@@ -3,11 +3,11 @@ const userController = require("../controllers/user-controller");
 const router = express.Router();
 const auth_middleware = require("../middleware/auth");
 
-//Get Request
-router.get("/",auth_middleware, userController.getUser);
+//Get <Request></Request>
+router.get("/", userController.getUser);
 
 //  Get Request for particular id
-router.get("/:id",auth_middleware, userController.getUserById);
+router.get("/:id", userController.getUserById);
 
  //Post Request
 router.post("/", userController.createUser);
