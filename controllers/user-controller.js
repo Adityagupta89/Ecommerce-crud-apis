@@ -56,8 +56,10 @@ const updateUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     console.log(user);
     if (!user) return res.status(404).send({msg:"The customer with the given ID was not found.",status:404});
+    if(req.body.password){
     const salt = await bcrypt.genSalt(10);
     password  = await bcrypt.hash(req.body.password, salt);
+    }
     user.first_name = req.body.first_name? req.body.first_name : user.first_name;
     user.last_name = req.body.last_name ? req.body.last_name : user.last_name,
       user.email = req.body.email ? req.body.email : user.email,
