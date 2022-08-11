@@ -67,8 +67,17 @@ function validateAdmin(userAdmin) {
     });
     return schema.validate(user);
   }
+function validatePassword(user) {
+    const schema = Joi.object().keys({
+      email: Joi.string().required().email(),
+      oldpassword:Joi.string().min(5).max(255).required(),
+      newpassword:Joi.string().min(5).max(255).required(),
+    });
+    return schema.validate(user);
+  }
 
 module.exports.User=User;
 module.exports.validateUser=validateUser
 module.exports.validateUserUpdate=validateUserUpdate
 module.exports.validateAdmin=validateAdmin
+module.exports.validatePassword=validatePassword

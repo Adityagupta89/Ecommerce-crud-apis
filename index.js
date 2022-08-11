@@ -6,6 +6,7 @@ const user_routes = require("./routes/users");
 const product_routes = require("./routes/product");
 const order_routes = require("./routes/order");
 const auth_routes = require("./routes/auth");
+const mail_routes=require('./routes/mail')
 const { User } = require("./models/user");
 const bcrypt = require("bcrypt");
 const cors=require('cors')
@@ -16,6 +17,7 @@ app.use(cors({
 app.use('/uploads',express.static('uploads'))
 app.use("/api/user/", user_routes);
 app.use("/api/auth", auth_routes);
+app.use("/api/mail", mail_routes);
 app.use("/api/product", product_routes);
 app.use("/api/order/", order_routes);
 mongoose

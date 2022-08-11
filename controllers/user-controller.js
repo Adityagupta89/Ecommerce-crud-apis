@@ -1,12 +1,32 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const { User, validateUser, validateUserUpdate } = require("../models/user");
+const { User, validateUser, validateUserUpdate,validatePassword } = require("../models/user");
 
 const getUser = async (req, res) => {
   const users = await User.find();
   res.send(users);
 };
-
+const changePassword=async (req,res)=>{
+  
+  try{
+  const { error } = validatePassword(req.body);
+  if (error) return res.status(400).send({msg:error.details[0].message,status:400,data:"Hello"});
+  let user = await User.findOne({ email: req.body.email });
+  console.log(user);
+  if (!user) return res.status(404).send({msg:"This User is not  registered.",data:"",status:404});
+  const validPassword=await bcrypt.compare(req.body.oldpassword,user.password)
+  if(!validPassword) return res.status(400).send(({msg:"Invalid Password",data:"",status:400}))
+  const salt = await bcrypt.genSalt(10);
+  if(req.body.oldpassword===req.body.newpassword)
+  return res.status(400).send({msg:"Please Enter new password",status:400})
+  const newpassword  = await bcrypt.hash(req.body.newpassword, salt);
+  user.password=newpassword;
+  await user.save();
+  res.status(200).send({msg:"Password is changed",status:200})
+  }catch(err){
+    res.send({msg:err,status:400})
+  }
+}
 const getUserById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
     return res.status(400).send({msg:"Id is not valid",status:400,data:''});
@@ -89,6 +109,7 @@ const deleteUser = async (req, res) => {
 
 module.exports.getUser = getUser;
 module.exports.getUserById = getUserById;
+module.exports.changePassword=changePassword
 module.exports.createUser = createUser;
 module.exports.updateUser = updateUser;
 module.exports.deleteUser = deleteUser;
