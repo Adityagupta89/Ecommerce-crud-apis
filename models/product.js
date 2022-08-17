@@ -16,8 +16,7 @@ const Product=mongoose.model('Product',new mongoose.Schema({
         required:true,
     },
     product_image:{
-        type:String,
-        
+        type:String,  
     },
     category:String,
     create_date:{

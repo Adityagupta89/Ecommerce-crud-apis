@@ -11,6 +11,9 @@ const User=mongoose.model('User',new mongoose.Schema({
         minlength:2,
         maxlength:50
     },
+    user_image:{
+      type:String,  
+    },
     email:{
         type:String,
         required:true,
@@ -23,13 +26,14 @@ const User=mongoose.model('User',new mongoose.Schema({
     mobile_no:{
         type:Number,
     },
-    address_info:{
+    address_info:[{
       address1:String,
       address2:String,
       landmark:String,
       city:String,
       pincode:Number,
-    },
+      primary:Boolean,
+    }],
     dob:{
         type:Date,
         default:Date.now
@@ -43,7 +47,11 @@ function validateUser(user) {
       email: Joi.string().required().email(),
       password:Joi.string().min(5).max(255).required(),
       mobile_no:Joi.number().required(),
-      address_info:Joi.object().required(),
+      address1:Joi.string().min(2).max(50).required(),
+      address2:Joi.string().min(2).max(50).required(),
+      landmark:Joi.string().min(2).max(50).required(),
+      city:Joi.string().min(2).max(50).required(),
+      pincode:Joi.number().required(),  
       dob:Joi.date(),
     });
     return schema.validate(user);
@@ -53,10 +61,13 @@ function validateUserUpdate(user) {
       first_name: Joi.string().min(2).max(50),
       last_name: Joi.string().min(2).max(50),
       email: Joi.string().email(),
+      profileImage:Joi.string(),
       password:Joi.string().min(5).max(255),
       mobile_no:Joi.number(),
-      address_info:Joi.object(),
+      address_info:Joi.array(),
       dob:Joi.date(),
+      _id:Joi.string(),
+      user_image:Joi.string(),
     });
     return schema.validate(user);
   }
@@ -75,9 +86,21 @@ function validatePassword(user) {
     });
     return schema.validate(user);
   }
+  function validateAddress(user) {
+    const schema = Joi.object().keys({
+      email : Joi.string().email(),
+      address1:Joi.string().min(2).max(50).required(),
+      address2:Joi.string().min(2).max(50).required(),
+      landmark:Joi.string().min(2).max(50).required(),
+      city:Joi.string().min(2).max(50).required(),
+      pincode:Joi.number().required(),  
 
+    })
+    return schema.validate(user);
+  }
 module.exports.User=User;
 module.exports.validateUser=validateUser
 module.exports.validateUserUpdate=validateUserUpdate
 module.exports.validateAdmin=validateAdmin
 module.exports.validatePassword=validatePassword
+module.exports.validateAddress=validateAddress

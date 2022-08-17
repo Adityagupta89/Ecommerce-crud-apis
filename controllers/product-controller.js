@@ -1,15 +1,10 @@
 const mongoose = require("mongoose");
 const { Product, validateProduct} = require("../models/product");
-const fs=require('file-system')
-// const imageSchema=mongoose.Schema({
-//   image:{data:Buffer,contentType:String}
-// });
-// const ImageModel=mongoose.model('image',imageSchema);
+
 const getProduct= async (req, res) => {
   const products = await Product.find();
   res.send(products);
 };
-
 
 const getProductById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
@@ -25,7 +20,7 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
   const { error } = validateProduct(req.body);
   if (error) return res.status(400).send({msg:error.details[0].message,status:400,data:''});  
-  
+
   const product = new Product({
     name: req.body.name,
     price: req.body.price,
@@ -45,7 +40,7 @@ const createProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  console.log(req.params.id)
+  
   const { error } = validateProduct(req.body);
   if (error) return res.status(400).send({msg:error.details[0].message,status:400,data:''});
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
@@ -67,11 +62,10 @@ const updateProduct = async (req, res) => {
       product.save();
     res.send({msg:"Product is updated ",status:201,data:''});
   } catch (err) {
-    console.log(err);
+    // console.log(err)
     res.status(400).send({msg:err,status:400,data:''});
   }
 };
-
 
 const deleteProduct = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
@@ -84,7 +78,6 @@ const deleteProduct = async (req, res) => {
 
   res.send("product deleted");
 };
-
 
 module.exports.getProduct = getProduct;
 module.exports.getProductById = getProductById;

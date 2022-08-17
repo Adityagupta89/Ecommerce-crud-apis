@@ -36,7 +36,7 @@ const mail = async (req, res) => {
     from: '"Jiten" <jmuradnar@intouchtechnology.com>', // sender address
     to: req.body.email, // list of receivers
     subject: "Welcome!",
-    // text:'Hello world',// the name of the template file i.e email.handlebars
+    
     html: `<div>Hi <b> ${user.first_name} ${user.last_name} ,</b></div>
         <div style="margin-top:1rem">Thank You for shopping in E-commerce web-application.</div>
         <div style="margin-top:.7rem;line-height:2.5">The Password for your E-Commerce Account ${user.email} was changed.</div>
@@ -44,13 +44,11 @@ const mail = async (req, res) => {
         <div style="margin-top:.7rem;line-height:2.5">you can login from this password or you can change this password from Profile section.</div>
         `,
   };
-
+  res.status(200).send({ msg: "Please check your email", status: 200 });
   // trigger the sending of the E-mail
   transporter.sendMail(mailOptions, function (error, info) {
-    if (info.response)
-      res.status(200).send({ msg: "Please check your email", status: 200 });
     if (error) {
-      return console.log(error);
+      return res.status(400).send({ msg:error.message, status: 400 });;
     }
   });
 };

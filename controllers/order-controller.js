@@ -3,7 +3,7 @@ const { Order, validateOrder } = require("../models/order");
 const {User}=require('../models/user');
 const {Product}=require('../models/product')
 const getOrder = async (req, res) => {
-  console.log("In Order");
+
   const orders = await Order.find().populate('user', 'email mobile_no')
   .populate('product','category price name ')
   .select('order_date ')
@@ -14,7 +14,7 @@ const getOrder = async (req, res) => {
 function getUserWithPosts(username){
   return User.findOne({ username: username })
     .populate('posts').exec((err, posts) => {
-      console.log("Populated User " + posts);
+      
     })
 }
 
@@ -32,8 +32,8 @@ const getOrderById = async (req, res) => {
 const createOrder = async (req, res) => {
   const { error } = validateOrder(req.body);
   if (error) return res.status(400).send({msg:error.details[0].message,status:400});
-  console.log("Adi")
-  console.log(req.body.product_id)
+  // console.log("Adi")
+  // console.log(req.body.product_id)
   const user = await User.findOne({_id:req.body.user_id});
   if(!user) return res.status(400).send({msg:"User is invalid",status:400});
   let order = new Order({
@@ -61,7 +61,7 @@ const updateOrder = async (req, res) => {
     if (!order) return res.status(404).send({msg:"The customer with the given ID was not found.",status:404});
     if(req.user_id!='undefined'){
     const user = await User.findOne({_id:req.body.user_id});
-    console.log(user)
+    // console.log(user)
     if(!user) return res.status(400).send({msg:"User is invalid",status:400});
     }
       (order.user_id= req.body.user_id ? req.body.user_id  : order.user_id);
