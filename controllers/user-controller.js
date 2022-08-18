@@ -6,6 +6,7 @@ const getUser = async (req, res) => {
   const users = await User.find();
   res.send(users);
 };
+
 const changePassword=async (req,res)=>{
   
   try{
@@ -15,10 +16,10 @@ const changePassword=async (req,res)=>{
   // console.log(user);
   if (!user) return res.status(404).send({msg:"This User is not  registered.",data:"",status:404});
   const validPassword=await bcrypt.compare(req.body.oldpassword,user.password)
-  if(!validPassword) return res.status(400).send(({msg:"Invalid Password",data:"",status:400}))
+  if(!validPassword) return res.status(400).send(({msg:"Current password is not valid",data:"",status:400}))
   const salt = await bcrypt.genSalt(10);
   if(req.body.oldpassword===req.body.newpassword)
-  return res.status(400).send({msg:"Please Enter new password",status:400})
+  return res.status(400).send({msg:"New password can't be same from previous password",status:400})
   const newpassword  = await bcrypt.hash(req.body.newpassword, salt);
   user.password=newpassword;
   await user.save();

@@ -2,19 +2,18 @@ const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const { User } = require("../models/user");
 const bcrypt = require("bcrypt");
+
 const mail = async (req, res) => {
   let newpassword = uuidv4();
   let user = await User.findOne({ email: req.body.email });
   if (!user)
-    return res
-      .status(400)
-      .send(
-        new Error({
-          msg: "No user found with provided email",
-          data: "",
-          status: 400,
-        })
-      );
+    return res.status(400).send(
+      new Error({
+        msg: "No user found with provided email",
+        data: "",
+        status: 400,
+      })
+    );
   try {
     const salt = await bcrypt.genSalt(10);
     const newPassword = await bcrypt.hash(newpassword, salt);
@@ -36,7 +35,7 @@ const mail = async (req, res) => {
     from: '"Jiten" <jmuradnar@intouchtechnology.com>', // sender address
     to: req.body.email, // list of receivers
     subject: "Welcome!",
-    
+
     html: `<div>Hi <b> ${user.first_name} ${user.last_name} ,</b></div>
         <div style="margin-top:1rem">Thank You for shopping in E-commerce web-application.</div>
         <div style="margin-top:.7rem;line-height:2.5">The Password for your E-Commerce Account ${user.email} was changed.</div>
@@ -48,7 +47,7 @@ const mail = async (req, res) => {
   // trigger the sending of the E-mail
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      return res.status(400).send({ msg:error.message, status: 400 });;
+      return res.status(400).send({ msg: error.message, status: 400 });
     }
   });
 };
