@@ -8,12 +8,12 @@ const getProduct= async (req, res) => {
 
 const getProductById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
+    return res.status(400).send("Product Id is not valid");
   const product = await Product.findById(req.params.id);
   if (!product)
     return res
       .status(404)
-      .send("The customer with the given ID was not found.");
+      .send("Product is not Exist");
   res.send(product);
 };
 
@@ -44,13 +44,13 @@ const updateProduct = async (req, res) => {
   const { error } = validateProduct(req.body);
   if (error) return res.status(400).send({msg:error.details[0].message,status:400,data:''});
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send({msg:"Id is not valid",status:400,data:''});
+    return res.status(400).send({msg:"Product Id is not valid",status:400,data:''});
   try {
     const product= await Product.findById(req.params.id);
     if (!product)
       return res
         .status(404)
-        .send({msg:"The customer with the given ID was not found.",status:404,data:''});
+        .send({msg:"The Product was not found.",status:404,data:''});
       (product.name = req.body.name  ? req.body.name : product.name);
       (product.price = req.body.price ? req.body.price : product.price),
       (product.weight = req.body.weight ? req.body.weight : product.weight),
@@ -69,12 +69,12 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
+    return res.status(400).send("Product Id is not valid");
   const product = await Product.findByIdAndRemove(req.params.id);
   if (!product)
     return res
       .status(204)
-      .send("The customer with the given ID was not found.");
+      .send("Product was not found.");
 
   res.send("product deleted");
 };

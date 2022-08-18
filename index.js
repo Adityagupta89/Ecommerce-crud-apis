@@ -10,6 +10,7 @@ const mail_routes=require('./routes/mail')
 const { User } = require("./models/user");
 const bcrypt = require("bcrypt");
 const cors=require('cors')
+
 app.use(express.json());
 app.use(cors({
   origin:"*"

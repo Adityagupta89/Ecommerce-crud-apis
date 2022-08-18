@@ -29,7 +29,7 @@ const changePassword=async (req,res)=>{
 }
 const getUserById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send({msg:"Id is not valid",status:400,data:''});
+    return res.status(400).send({msg:"User Id is not valid",status:400,data:''});
   const user = await User.findById(req.params.id);
   if (!user)
     return res
@@ -98,7 +98,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
   
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send({msg:"Id is not valid",status:400});
+    return res.status(400).send({msg:"User Id is not valid",status:400});
     let password;
   try {
     const user = await User.findById(req.params.id);

@@ -20,22 +20,20 @@ function getUserWithPosts(username){
 
 const getOrderById = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
+    return res.status(400).send("Order Id is not valid");
   const order = await Order.findById(req.params.id);
   if (!order)
     return res
       .status(404)
-      .send("The customer with the given ID was not found.");
+      .send("Order is not created");
   res.send(order);
 };
 
 const createOrder = async (req, res) => {
   const { error } = validateOrder(req.body);
   if (error) return res.status(400).send({msg:error.details[0].message,status:400});
-  // console.log("Adi")
-  // console.log(req.body.product_id)
   const user = await User.findOne({_id:req.body.user_id});
-  if(!user) return res.status(400).send({msg:"User is invalid",status:400});
+  if(!user) return res.status(400).send({msg:"User of this order is not registered !",status:400});
   let order = new Order({
     user:req.body.user_id,
     product:req.body.product_id,
@@ -48,21 +46,21 @@ const createOrder = async (req, res) => {
   } catch (err) {
     return res.status(400).send({msg:err.message,status:400});
   }
-  res.status(201).send({msg:"Order is created",data:order,status:201});
+  res.status(201).send({msg:"Order is placed",data:order,status:201});
 };
 
 const updateOrder = async (req, res) => {
   const { error } = validateOrder(req.body);
   if (error) return res.status(400).send({msg:error.details[0].message,status:400});
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send({msg:"Id is not valid",status:400});
+    return res.status(400).send({msg:"Order Id is not valid",status:400});
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).send({msg:"The customer with the given ID was not found.",status:404});
+    if (!order) return res.status(404).send({msg:"Order is not created",status:404});
     if(req.user_id!='undefined'){
     const user = await User.findOne({_id:req.body.user_id});
     // console.log(user)
-    if(!user) return res.status(400).send({msg:"User is invalid",status:400});
+    if(!user) return res.status(400).send({msg:"User of this order is not registered !",status:400});
     }
       (order.user_id= req.body.user_id ? req.body.user_id  : order.user_id);
       (order.update_id= req.body.update_id ? req.body.update_id  : order.update_id);
@@ -84,7 +82,7 @@ const deleteOrder = async (req, res) => {
   if (!order)
     return res
       .status(204)
-      .send("The customer with the given ID was not found.");
+      .send("Order is not created");
   res.send("Order deleted");
 };
 
