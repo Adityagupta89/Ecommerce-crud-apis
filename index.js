@@ -21,6 +21,7 @@ app.use("/api/auth", auth_routes);
 app.use("/api/mail", mail_routes);
 app.use("/api/product", product_routes);
 app.use("/api/order/", order_routes);
+
 mongoose
   .connect(DB) 
   .then(() => console.log("Connected to MongoDB..."))

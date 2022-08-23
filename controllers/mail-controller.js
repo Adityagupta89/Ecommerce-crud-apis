@@ -8,11 +8,11 @@ const mail = async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
   if (!user)
     return res.status(400).send(
-      new Error({
-        msg: "No user found with provided email",
+      {
+        msg: "No user found with this  email",
         data: "",
         status: 400,
-      })
+      }
     );
   try {
     const salt = await bcrypt.genSalt(10);

@@ -12,18 +12,19 @@ const getOrder = async (req, res) => {
   res.send(orders);
 };
 
-function getUserWithPosts(username) {
-  return User.findOne({ username: username })
-    .populate("posts")
-    .exec((err, posts) => {});
-}
-
-const getOrderById = async (req, res) => {
+const getOrderByUserId = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Order Id is not valid");
-  const order = await Order.findById(req.params.id);
-  if (!order) return res.status(404).send("Order is not created");
-  res.send(order);
+    return res.status(400).send({ msg: "User Id is not valid", status: 400 });
+  const orders = await Order.find()
+    .populate("user", "email mobile_no")
+    .populate("product", "category price name ")
+    .select("order_date ")
+    .select("address_info");
+
+  const filterorder = orders.filter((order) => {
+    return order.user._id.toString() === req.params.id;
+  });
+  res.send({ msg: "successful", status: 200, data: filterorder });
 };
 
 const createOrder = async (req, res) => {
@@ -94,7 +95,7 @@ const deleteOrder = async (req, res) => {
 };
 
 module.exports.getOrder = getOrder;
-module.exports.getOrderById = getOrderById;
+module.exports.getOrderById = getOrderByUserId;
 module.exports.createOrder = createOrder;
 module.exports.updateOrder = updateOrder;
 module.exports.deleteOrder = deleteOrder;

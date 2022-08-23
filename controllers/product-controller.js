@@ -1,9 +1,34 @@
 const mongoose = require("mongoose");
+const { reset } = require("nodemon");
 const { Product, validateProduct } = require("../models/product");
 
 const getProduct = async (req, res) => {
   const products = await Product.find();
   res.send(products);
+};
+
+const getProductBySearch = async (req, res) => {
+  const search = req.query.search;
+  const product = await Product.find();
+  const filterData = product.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
+  return res.send({ msg: "Okk", data: filterData, status: 200 });
+};
+
+const getProductByPagination = async (req, res) => {
+  const page = req.query.page;
+  const category = req.query.category;
+
+  const products = await Product.find({
+    category: category,
+  });
+  const limit = 8;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const resultProduct = products.slice(startIndex, endIndex);
+  const maxPage = Math.ceil(products.length / 8);
+  res.send({ msg: "Okk", data: resultProduct, maxPage: maxPage, status: 200 });
 };
 
 const getProductById = async (req, res) => {
@@ -20,13 +45,14 @@ const createProduct = async (req, res) => {
     return res
       .status(400)
       .send({ msg: error.details[0].message, status: 400, data: "" });
+  const path = req.files.file2.map((file) => file.path);
 
   const product = new Product({
     name: req.body.name,
     price: req.body.price,
     weight: req.body.weight,
     description: req.body.description,
-    product_image: req.file.path,
+    product_image: path,
     category: req.body.category,
     create_date: req.body.create_date,
     quantity: req.body.quantity,
@@ -57,15 +83,14 @@ const updateProduct = async (req, res) => {
       return res
         .status(404)
         .send({ msg: "The Product was not found.", status: 404, data: "" });
+    const path = req.files?.file2.map((file) => file.path);
     product.name = req.body.name ? req.body.name : product.name;
     (product.price = req.body.price ? req.body.price : product.price),
       (product.weight = req.body.weight ? req.body.weight : product.weight),
       (product.description = req.body.description
         ? req.body.description
         : product.description),
-      (product.product_image = req.file?.path
-        ? req.file?.path
-        : product.product_image),
+      (product.product_image = req.file?.path ? path : product.product_image),
       (product.category = req.body.category
         ? req.body.category
         : product.category),
@@ -97,3 +122,5 @@ module.exports.getProductById = getProductById;
 module.exports.createProduct = createProduct;
 module.exports.updateProduct = updateProduct;
 module.exports.deleteProduct = deleteProduct;
+module.exports.getProductBySearch = getProductBySearch;
+module.exports.getProductByPagination = getProductByPagination;
