@@ -1,82 +1,37 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const userController = require("../controllers/user-controller");
 const router = express.Router();
-const { User, validateUser } = require("../models/user");
+const auth_middleware = require("../middleware/auth");
+const multer = require("multer");
 
-//Get Request
-router.get("/", async (req, res) => {
-  const users = await User.find();
-  res.send(users);
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./uploads/Profile");
+  },
+  filename: function (req, file, cb) {
+    cb(null, new Date().toISOString() + file.originalname);
+  },
 });
+
+var upload = multer({ storage: storage });
+//Get <Request></Request>
+router.get("/", userController.getUser);
+
+// Put Request for change password
+router.put("/changePassword", userController.changePassword);
+
 //  Get Request for particular id
-router.get("/:id", async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
-  const user = await User.findById(req.params.id);
-  if (!user)
-    return res
-      .status(404)
-      .send("The customer with the given ID was not found.");
-  res.send(user);
-});
+router.get("/:id", userController.getUserById);
 
 //Post Request
-router.post("/", async (req, res) => {
-  const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  let user = new User({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    mobile_no: req.body.mobile_no,
-    address: req.body.address,
-    dob: req.body.dob,
-  });
-  try {
-    user = await user.save();
-  } catch (err) {
-    return res.status(400).send(err.message);
-  }
-  res.status(201).send(user);
-});
+router.post("/", upload.single("profileImage"), userController.createUser);
 
-// Put Request
-router.put("/:id", async (req, res) => {
-  const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
-  try {
-    const user = await User.findByIdAndUpdate(req.params.id, {
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      email: req.body.email,
-      mobile_no: req.body.mobile_no,
-      address: req.body.address,
-      dob: req.body.dob,
-    });
-    if (!user)
-      return res
-        .status(404)
-        .send("The customer with the given ID was not found.");
+router.post("/updateAddress", userController.updateAddress);
 
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("err.message");
-  }
-});
+// Put Request update user
+router.put("/:id", upload.single("profileImage"), userController.updateUser);
 
 // delete request
-router.delete("/:id", async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id))
-    return res.status(400).send("Id is not valid");
-  const user = await User.findByIdAndRemove(req.params.id);
-  if (!User)
-    return res
-      .status(204)
-      .send("The customer with the given ID was not found.");
-
-  res.send("User deleted");
-});
+router.delete("/:id", auth_middleware, userController.deleteUser);
 
 module.exports = router;
