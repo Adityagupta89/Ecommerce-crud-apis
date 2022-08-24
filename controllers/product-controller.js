@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const { reset } = require("nodemon");
 const { Product, validateProduct } = require("../models/product");
+var fs = require("fs");
+const { copySync } = require("file-system");
 
 const getProduct = async (req, res) => {
   const products = await Product.find();
@@ -45,14 +47,19 @@ const createProduct = async (req, res) => {
     return res
       .status(400)
       .send({ msg: error.details[0].message, status: 400, data: "" });
-  const path = req.files.file2.map((file) => file.path);
+  var fileInfo = [];
 
+  for (var i = 0; i < req.files.length; i++) {
+    fileInfo.push(
+      Buffer.from(fs.readFileSync(req.files[i].path)).toString("base64")
+    );
+  }
   const product = new Product({
     name: req.body.name,
     price: req.body.price,
     weight: req.body.weight,
     description: req.body.description,
-    product_image: path,
+    product_image: fileInfo,
     category: req.body.category,
     create_date: req.body.create_date,
     quantity: req.body.quantity,
@@ -83,14 +90,22 @@ const updateProduct = async (req, res) => {
       return res
         .status(404)
         .send({ msg: "The Product was not found.", status: 404, data: "" });
-    const path = req.files?.file2.map((file) => file.path);
+
+    var fileInfo = [];
+    for (var i = 0; i < req.files.length; i++) {
+      fileInfo.push(
+        Buffer.from(fs.readFileSync(req.files[i].path)).toString("base64")
+      );
+      // fs.unlink(req.files[i].path);
+    }
+
     product.name = req.body.name ? req.body.name : product.name;
     (product.price = req.body.price ? req.body.price : product.price),
       (product.weight = req.body.weight ? req.body.weight : product.weight),
       (product.description = req.body.description
         ? req.body.description
         : product.description),
-      (product.product_image = req.file?.path ? path : product.product_image),
+      (product.product_image = req.files ? fileInfo : product.product_image),
       (product.category = req.body.category
         ? req.body.category
         : product.category),
@@ -103,7 +118,6 @@ const updateProduct = async (req, res) => {
       product.save();
     res.send({ msg: "Product is updated ", status: 201, data: "" });
   } catch (err) {
-    // console.log(err)
     res.status(400).send({ msg: err, status: 400, data: "" });
   }
 };

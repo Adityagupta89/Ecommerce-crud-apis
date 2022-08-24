@@ -49,6 +49,7 @@ const auth = async (req, res) => {
     });
 };
 
+
 function validate(user) {
   const schema = Joi.object().keys({
     email: Joi.string().min(5).max(255).required().email(),

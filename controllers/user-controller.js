@@ -21,7 +21,7 @@ const changePassword = async (req, res) => {
         .status(400)
         .send({ msg: error.details[0].message, status: 400, data: "Hello" });
     let user = await User.findOne({ email: req.body.email });
-    // console.log(user);
+
     if (!user)
       return res
         .status(404)
@@ -158,7 +158,6 @@ const updateUser = async (req, res) => {
       (user.user_image = req.file?.path ? req.file?.path : user.user_image),
       (user.dob = req.body.dob ? req.body.dob : user.dob),
       user.save();
-    // console.log(user)
     res.send({ msg: "Profile Updated ", data: user, status: 200 });
   } catch (err) {
     res.status(400).send({ msg: err, status: 400 });
