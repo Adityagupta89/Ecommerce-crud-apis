@@ -53,6 +53,9 @@ const createProduct = async (req, res) => {
     fileInfo.push(
       Buffer.from(fs.readFileSync(req.files[i].path)).toString("base64")
     );
+    fs.unlink(req.files[i].path, function (err) {
+      console.log("removed");
+    });
   }
   const product = new Product({
     name: req.body.name,
@@ -96,7 +99,8 @@ const updateProduct = async (req, res) => {
       fileInfo.push(
         Buffer.from(fs.readFileSync(req.files[i].path)).toString("base64")
       );
-      // fs.unlink(req.files[i].path);
+      fs.unlink(req.files[i].path,function(err){console.log("removed")})
+      
     }
 
     product.name = req.body.name ? req.body.name : product.name;
