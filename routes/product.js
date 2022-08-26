@@ -3,13 +3,12 @@ const productController = require("../controllers/product-controller");
 const router = express.Router();
 const multer = require("multer");
 const { DB } = require("../config/index");
-
 const auth_middleware = require("../middleware/auth");
 const admin_middleware = require("../middleware/admin");
 // const uploadController = require("../controllers/upload");
 
 router.use(auth_middleware);
-router.use(admin_middleware);
+// router.use(admin_middleware);
 
 //Get Request
 router.get("/", productController.getProduct);
